@@ -2,6 +2,14 @@
 Changelog for package ardrone_sumo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.0.1 (2025-12-05)
+------------------
+
+2.0.0 (2025-12-04)
+------------------
+* Uses ardrone_sdk version 2 with direct source files instead of tarball download
+* Contributors: Victor Talpaert
+
 1.1.0 (2025-05-18)
 ------------------
 * [kilted] Update deprecated call to ament_target_dependencies (`#1 <https://github.com/vtalpaert/ardrone-ros2/issues/1>`_)
