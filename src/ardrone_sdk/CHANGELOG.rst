@@ -2,6 +2,11 @@
 Changelog for package ardrone_sdk
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.0.2 (2025-12-05)
+------------------
+* change libncurses to libncurses-dev since we not build full sdk
+* Contributors: Victor Talpaert
+
 2.0.1 (2025-12-05)
 ------------------
 * add libjson-c-dev rosdep just added to rosdistro
