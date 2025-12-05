@@ -1,71 +1,123 @@
 cmake_minimum_required(VERSION 3.12)
-project(ardrone_sdk)
-
-
-# Start with downloading the ARSDK3 compiled SDK for linux
-include(ExternalProject)
-ExternalProject_Add(
-	arsdk3
-	URL https://github.com/vtalpaert/ardrone-sdk-native/releases/download/arsdk-native-samples-x64-master/arsdk-native-samples-x64-master.tar.gz
-	URL_MD5 03a38db362392bfa8576d9de64f2440a
-	PREFIX arsdk3
-	DOWNLOAD_NO_PROGRESS true
-	CONFIGURE_COMMAND ""
-	BUILD_COMMAND ""
-	INSTALL_COMMAND ""
-)
-
-# Install the library into ardrone_sdk
-set(SDK_SRC ${CMAKE_CURRENT_BINARY_DIR}/arsdk3/src/arsdk3/usr)
-set(SDK_LIC ${CMAKE_CURRENT_BINARY_DIR}/arsdk3/src/arsdk3/parrot_license.md)
-install(
-	DIRECTORY ${SDK_SRC}/bin ${SDK_SRC}/include ${SDK_SRC}/lib ${SDK_SRC}/share
-	DESTINATION .
-	USE_SOURCE_PERMISSIONS
-	MESSAGE_NEVER
-)
-install(FILES ${SDK_LIC} DESTINATION .)
+project(ardrone_sdk VERSION 3.14.0 LANGUAGES C)
 
 # Use ament to declare a package
 find_package(ament_cmake REQUIRED)
 
-set(LIBRARY_NAME ${PROJECT_NAME})
-# Create interface target to existing files already installed in ardrone_sdk folder by arsdk3 ExternalProject
-add_library(${LIBRARY_NAME} INTERFACE)
-
-# The library version is dependent on the actual downloaded library in arsdk3
-# Here we will hardcode the version
-set_target_properties(${LIBRARY_NAME} PROPERTIES VERSION 3.14.0)
-
-# Add the include dir
-target_include_directories(
-	${LIBRARY_NAME}
-	INTERFACE
-	$<INSTALL_INTERFACE:include/>
+# List all private headers and sources
+#file(GLOB_RECURSE ARSDK_SRC
+#	"src/*.h"
+#    "src/*.c"	
+#)
+file(GLOB_RECURSE ARSDK_SRC
+    "${CMAKE_CURRENT_SOURCE_DIR}/Sources/*"
 )
 
-# Add individually listed shared library files
-# The arsdk3 archive is only downloaded at INSTALL time, so we cannot GLOB
-# over the lib folder. Instead we hardcode the list of libraries.
-# The libraries will be linked when using find_package(ardrone_sdk REQUIRED)
-# thanks to the install/ardrone_sdk/share/ardrone_sdk/cmake/export_ardrone_sdkExport.cmake
-# file
-set(INTERFACE_LINK_LIBRARIES "$\{_IMPORT_PREFIX\}/lib/libarcommands.so;$\{_IMPORT_PREFIX\}/lib/libarcontroller.so;$\{_IMPORT_PREFIX\}/lib/libardatatransfer.so;$\{_IMPORT_PREFIX\}/lib/libardiscovery.so;$\{_IMPORT_PREFIX\}/lib/libarmavlink.so;$\{_IMPORT_PREFIX\}/lib/libarmedia.so;$\{_IMPORT_PREFIX\}/lib/libarnetwork.so;$\{_IMPORT_PREFIX\}/lib/libarnetworkal.so;$\{_IMPORT_PREFIX\}/lib/libarsal.so;$\{_IMPORT_PREFIX\}/lib/libarstream.so;$\{_IMPORT_PREFIX\}/lib/libarstream2.so;$\{_IMPORT_PREFIX\}/lib/libarupdater.so;$\{_IMPORT_PREFIX\}/lib/libarutils.so;$\{_IMPORT_PREFIX\}/lib/libcrypto.so;$\{_IMPORT_PREFIX\}/lib/libcurl.so;$\{_IMPORT_PREFIX\}/lib/libfutils.so;$\{_IMPORT_PREFIX\}/lib/libjson-c.so;$\{_IMPORT_PREFIX\}/lib/libjson.so;$\{_IMPORT_PREFIX\}/lib/libmux.so;$\{_IMPORT_PREFIX\}/lib/libpomp.so;$\{_IMPORT_PREFIX\}/lib/libpuf.so;$\{_IMPORT_PREFIX\}/lib/librtsp.so;$\{_IMPORT_PREFIX\}/lib/libsdp.so;$\{_IMPORT_PREFIX\}/lib/libssl.so;$\{_IMPORT_PREFIX\}/lib/libtar.so;$\{_IMPORT_PREFIX\}/lib/libtls.so;$\{_IMPORT_PREFIX\}/lib/libulog.so")
-target_link_libraries(${LIBRARY_NAME} INTERFACE ${INTERFACE_LINK_LIBRARIES})
-ament_export_targets(export_${LIBRARY_NAME} HAS_LIBRARY_TARGET)
+# Remove the implementation files that are included by other files
+list(REMOVE_ITEM ARSDK_SRC
+    "${CMAKE_CURRENT_SOURCE_DIR}/Sources/pomp_loop_linux.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Sources/pomp_loop_posix.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Sources/pomp_loop_win32.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Sources/pomp_timer_linux.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Sources/pomp_timer_posix.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Sources/ARDISCOVERY_AvahiDiscovery_nodbus.c"
+)
+
+# Create ardrone_sdk as a library
+add_library(${PROJECT_NAME}_lib SHARED ${ARSDK_SRC})
+#add_library(${PROJECT_NAME}::${PROJECT_NAME}_lib ALIAS ${PROJECT_NAME}_lib)
+
+## Headers
+
+# Public headers (only the ones in include/)
+file(GLOB_RECURSE ARSDK_PUBLIC_INCLUDE
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/*"
+)
+# Set public headers for the target
+#target_sources(${PROJECT_NAME}_lib PUBLIC ${ARSDK_PUBLIC_INCLUDE})
+#set_target_properties(${PROJECT_NAME}_lib PROPERTIES PUBLIC_HEADER ${ARSDK_PUBLIC_INCLUDE})
+
+# include/ contains the public headers
+# Includes/ contains all headers (including generated headers)
+# Sources/ contains private headers
+target_include_directories(${PROJECT_NAME}_lib
+    PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+    PRIVATE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Includes>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Sources>
+)
+
+# Avoid redefining mmsghdr already in /usr/include/x86_64-linux-gnu/sys/socket.h
+# The flag is in Sources/arstream2_rtp.h
+target_compile_definitions(${PROJECT_NAME}_lib PRIVATE HAS_MMSG)
+
+# Math, Avahi and JSON-C
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(JSONC REQUIRED json-c)
+pkg_check_modules(AVAHI REQUIRED avahi-client)
+target_link_libraries(${PROJECT_NAME}_lib PRIVATE
+    m
+    ${JSONC_LIBRARIES}
+    ${AVAHI_LIBRARIES}
+)
+target_include_directories(${PROJECT_NAME}_lib PRIVATE
+    ${AVAHI_INCLUDE_DIRS}
+    ${JSONC_INCLUDE_DIRS}
+)
+
+# Minimal executable to verify includes and linking
+if(BUILD_TESTING)
+    add_executable(test_compile ${CMAKE_CURRENT_SOURCE_DIR}/test/test_compile.c)
+    target_include_directories(test_compile
+        PRIVATE
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    )
+    target_link_libraries(test_compile PUBLIC ${PROJECT_NAME}_lib)
+endif()
+
+## Samples
+# JumpingSumoSample
+find_package(Curses REQUIRED)
+add_executable(JumpingSumoSample
+    ${CMAKE_CURRENT_SOURCE_DIR}/JumpingSumoSample/ihm.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/JumpingSumoSample/JumpingSumoSample.c
+)
+target_include_directories(JumpingSumoSample
+    PRIVATE
+    ${CURSES_INCLUDE_DIRS}
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/JumpingSumoSample/>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+)
+target_link_libraries(JumpingSumoSample PUBLIC
+    ${CURSES_LIBRARIES}
+    ${PROJECT_NAME}_lib
+)
 
 install(
-	TARGETS ${LIBRARY_NAME}
-	EXPORT export_${LIBRARY_NAME}
-	LIBRARY DESTINATION lib
-	ARCHIVE DESTINATION lib
-	RUNTIME DESTINATION bin
+    TARGETS ${PROJECT_NAME}_lib JumpingSumoSample
+    EXPORT export_${PROJECT_NAME}
+    INCLUDES DESTINATION include
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin
 )
+install(
+    DIRECTORY include/
+    DESTINATION include
+)
+install(
+    FILES LICENSE.md
+    DESTINATION .
+)
+#install(EXPORT export_${PROJECT_NAME}
+#    FILE ${PROJECT_NAME}Targets.cmake
+#    NAMESPACE ${PROJECT_NAME}::
+#    DESTINATION lib/cmake/${PROJECT_NAME}
+#)
 
-# Clean up sdk folder, since `source install/setup.bash` will complain for the empty arsdk3 folder
-#install(CODE "message(STATUS \"Removing: ${CMAKE_INSTALL_PREFIX}/../arsdk3\")")
-#install(CODE "file(REMOVE_RECURSE ${CMAKE_INSTALL_PREFIX}/../arsdk3)")
-# ! Commented since colcon will search for an existing arsdk3 folder
+# Configure ament to include the targets file
+ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 
 # Setup project
 ament_package()
