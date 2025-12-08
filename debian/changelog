@@ -1,0 +1,44 @@
+ros-rolling-ardrone-sdk (2.0.3-1noble) noble; urgency=high
+
+  * fix format-security warning since ROS build farm triggers a format-security error
+  * Contributors: Victor Talpaert
+
+ -- victor <victor.talpaert@gmail.com>  Sun, 07 Dec 2025 23:00:00 -0000
+
+ros-rolling-ardrone-sdk (2.0.2-1noble) noble; urgency=high
+
+  * change libncurses to libncurses-dev since we now build use sdk source files instead of compiled binaries
+  * Contributors: Victor Talpaert
+
+ -- victor <victor.talpaert@gmail.com>  Thu, 04 Dec 2025 23:00:00 -0000
+
+ros-rolling-ardrone-sdk (2.0.1-1noble) noble; urgency=high
+
+  * add libjson-c-dev rosdep just added to rosdistro
+  * Contributors: Victor Talpaert
+
+ -- victor <victor.talpaert@gmail.com>  Thu, 04 Dec 2025 23:00:00 -0000
+
+ros-rolling-ardrone-sdk (2.0.0-1noble) noble; urgency=high
+
+  * Directly includes Parrot ARSDK source files instead of using tarball download
+  * Update ardrone_sdk external dependencies
+  * Contributors: Victor Talpaert, vtalpaert
+
+ -- victor <victor.talpaert@gmail.com>  Wed, 03 Dec 2025 23:00:00 -0000
+
+ros-rolling-ardrone-sdk (1.1.0-1noble) noble; urgency=high
+
+  * Compile ardrone_sdk without using the intermediate step of arsdk3 package
+
+ -- victor <victor.talpaert@gmail.com>  Sat, 17 May 2025 22:00:00 -0000
+
+ros-rolling-ardrone-sdk (1.0.0-1noble) noble; urgency=high
+
+  * Export Parrot ARSDK3 as a library with all cmake confguration to use find_package
+  * Includes the headers, shared libraries (.so), native unix samples and Parrot licence as required
+  * Contributors: Victor Talpaert
+
+ -- victor <victor.talpaert@gmail.com>  Thu, 01 May 2025 22:00:00 -0000
+
+
