@@ -1,0 +1,43 @@
+ros-humble-ardrone-sumo (2.0.3-1jammy) jammy; urgency=high
+
+
+
+ -- victor <victor.talpaert@gmail.com>  Sun, 07 Dec 2025 23:00:00 -0000
+
+ros-humble-ardrone-sumo (2.0.2-1jammy) jammy; urgency=high
+
+
+
+ -- victor <victor.talpaert@gmail.com>  Thu, 04 Dec 2025 23:00:00 -0000
+
+ros-humble-ardrone-sumo (2.0.1-1jammy) jammy; urgency=high
+
+
+
+ -- victor <victor.talpaert@gmail.com>  Thu, 04 Dec 2025 23:00:00 -0000
+
+ros-humble-ardrone-sumo (2.0.0-1jammy) jammy; urgency=high
+
+  * Uses ardrone_sdk version 2 with direct source files instead of tarball download
+  * Contributors: Victor Talpaert
+
+ -- victor <victor.talpaert@gmail.com>  Wed, 03 Dec 2025 23:00:00 -0000
+
+ros-humble-ardrone-sumo (1.1.0-1jammy) jammy; urgency=high
+
+  * [kilted] Update deprecated call to ament_target_dependencies (#1 <https://github.com/vtalpaert/ardrone-ros2/issues/1>)
+  * remove BUILD_TESTING CMake condition, since there are no tests
+  * Contributors: David V. Lu!!, Victor Talpaert
+
+ -- victor <victor.talpaert@gmail.com>  Sat, 17 May 2025 22:00:00 -0000
+
+ros-humble-ardrone-sumo (1.0.0-1jammy) jammy; urgency=high
+
+  * ROS2 node to control the Jumping Sumo Parrot drone
+  * Connect over private WiFi to retrieve the video feed, battery level and send motor commands
+  * No IMU data, no standard units for motor commands (currently in percentage of maximum value)
+  * Contributors: Victor Talpaert
+
+ -- victor <victor.talpaert@gmail.com>  Thu, 01 May 2025 22:00:00 -0000
+
+

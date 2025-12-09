@@ -1,0 +1,12 @@
+Source: ros-humble-ardrone-sumo
+Section: misc
+Priority: optional
+Maintainer: victor <victor.talpaert@gmail.com>
+Build-Depends: debhelper (>= 9.0.0), libopencv-dev, ros-humble-ament-cmake, ros-humble-ardrone-sdk, ros-humble-cv-bridge, ros-humble-rclcpp, ros-humble-sensor-msgs, ros-humble-ros-workspace
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-humble-ardrone-sumo
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libopencv-dev, ros-humble-ardrone-sdk, ros-humble-cv-bridge, ros-humble-rclcpp, ros-humble-sensor-msgs, ros-humble-ros-workspace
+Description: Control the Parrot JumpingSumo drone via ROS2 topics
