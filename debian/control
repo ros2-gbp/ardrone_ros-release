@@ -1,0 +1,12 @@
+Source: ros-jazzy-ardrone-sumo
+Section: misc
+Priority: optional
+Maintainer: victor <victor.talpaert@gmail.com>
+Build-Depends: debhelper (>= 9.0.0), libopencv-dev, ros-jazzy-ament-cmake, ros-jazzy-ardrone-sdk, ros-jazzy-cv-bridge, ros-jazzy-rclcpp, ros-jazzy-sensor-msgs, ros-jazzy-ros-workspace
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-jazzy-ardrone-sumo
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libopencv-dev, ros-jazzy-ardrone-sdk, ros-jazzy-cv-bridge, ros-jazzy-rclcpp, ros-jazzy-sensor-msgs, ros-jazzy-ros-workspace
+Description: Control the Parrot JumpingSumo drone via ROS2 topics
