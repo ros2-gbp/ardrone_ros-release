@@ -1,0 +1,12 @@
+Source: ros-jazzy-ardrone-sdk
+Section: misc
+Priority: optional
+Maintainer: victor <victor.talpaert@gmail.com>
+Build-Depends: debhelper (>= 9.0.0), ffmpeg, libavahi-client-dev, libavcodec-dev, libavformat-dev, libavutil-dev, libjson-c-dev, libncurses-dev, libswscale-dev, ros-jazzy-ament-cmake, ros-jazzy-ros-workspace
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-jazzy-ardrone-sdk
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ffmpeg, libavahi-client-dev, libavcodec-dev, libavformat-dev, libavutil-dev, libjson-c-dev, libncurses-dev, libswscale-dev, ros-jazzy-ros-workspace
+Description: Exports ARSDK3 as a library
