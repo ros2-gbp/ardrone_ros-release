@@ -78,4 +78,5 @@ tracks:
     ros_distro: rolling
     vcs_type: git
     vcs_uri: https://github.com/vtalpaert/ardrone-ros2.git
-    version: :{auto}
+    version: 2.0.3
+    version_saved: :{auto}
