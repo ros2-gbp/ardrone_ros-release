@@ -1,1 +1,1 @@
-{"base": "8c9025cfd1cc", "parent": "debian/rolling/ardrone_sumo", "previous": "e10a98e71aae", "trim": "", "trimbase": ""}
+{"base": "04d53ad", "parent": "debian/lyrical/ardrone_sumo", "previous": "7e2c579", "trim": "", "trimbase": ""}
