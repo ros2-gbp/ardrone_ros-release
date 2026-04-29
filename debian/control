@@ -1,0 +1,12 @@
+Source: ros-lyrical-ardrone-sumo
+Section: misc
+Priority: optional
+Maintainer: victor <victor.talpaert@gmail.com>
+Build-Depends: debhelper (>= 9.0.0), libopencv-dev, ros-lyrical-ament-cmake, ros-lyrical-ardrone-sdk, ros-lyrical-cv-bridge, ros-lyrical-rclcpp, ros-lyrical-sensor-msgs, ros-lyrical-ros-workspace
+Homepage: https://index.ros.org/p/ardrone_sumo/#lyrical
+Standards-Version: 3.9.2
+
+Package: ros-lyrical-ardrone-sumo
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libopencv-dev, ros-lyrical-ardrone-sdk, ros-lyrical-cv-bridge, ros-lyrical-rclcpp, ros-lyrical-sensor-msgs, ros-lyrical-ros-workspace
+Description: Control the Parrot JumpingSumo drone via ROS2 topics
